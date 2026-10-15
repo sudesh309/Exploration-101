@@ -47,7 +47,8 @@ interface ProgressDao {
 @Database(
     entities = [ProfileEntity::class, LessonProgressEntity::class, QuizAttemptEntity::class],
     version = 1,
-    exportSchema = true,
+    // Enable schema export (room.schemaLocation) when the first migration is introduced.
+    exportSchema = false,
 )
 abstract class KidLearnDatabase : RoomDatabase() {
     abstract fun profiles(): ProfileDao

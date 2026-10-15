@@ -8,10 +8,6 @@ android {
     namespace = "com.kidlearn.data"
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
-
 dependencies {
     api(project(":core:domain"))
     implementation(project(":core:content"))
