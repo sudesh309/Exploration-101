@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Open book -->
+    <path android:fillColor="#FFFFFF" android:pathData="M30,38 L52,42 L52,74 L30,70 Z" />
+    <path android:fillColor="#FFE0CC" android:pathData="M56,42 L78,38 L78,70 L56,74 Z" />
+    <!-- Star -->
+    <path android:fillColor="#FFC107" android:pathData="M54,22 L57,30 L65,30 L59,35 L61,43 L54,38 L47,43 L49,35 L43,30 L51,30 Z" />
+</vector>

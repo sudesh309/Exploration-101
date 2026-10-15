@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "id": "ai-how-computers-learn",
+  "version": 1,
+  "title": "How Computers Learn",
+  "description": "A first look at Artificial Intelligence and machine learning.",
+  "subject": {
+    "id": "ai",
+    "name": "Artificial Intelligence",
+    "color": "#7E57C2"
+  },
+  "ageRange": {
+    "min": 10,
+    "max": 15
+  },
+  "cover": "images/cover.webp",
+  "units": [
+    {
+      "id": "ml",
+      "title": "Machine learning",
+      "lessons": [
+        {
+          "id": "what-is-ai",
+          "title": "What is AI?",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "style": "heading",
+              "text": "Artificial Intelligence"
+            },
+            {
+              "type": "text",
+              "text": "Artificial Intelligence (AI) is when computers do things that normally need human intelligence: recognising pictures, understanding speech, translating languages or playing games."
+            },
+            {
+              "type": "text",
+              "text": "Instead of writing every rule by hand, we often let the computer learn the rules from examples. This is called machine learning."
+            }
+          ]
+        },
+        {
+          "id": "learning-from-examples",
+          "title": "Learning from examples",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "image",
+              "src": "images/examples.webp",
+              "caption": "Training data: pictures with labels"
+            },
+            {
+              "type": "text",
+              "text": "To teach a computer to tell cats from dogs we show it thousands of labelled pictures. It slowly adjusts itself until its guesses match the labels. Then it can guess labels for pictures it has never seen."
+            },
+            {
+              "type": "image",
+              "src": "images/network.webp",
+              "caption": "A neural network: layers of connected 'neurons'"
+            },
+            {
+              "type": "text",
+              "style": "fun_fact",
+              "text": "AI can be wrong! If the examples are unfair or too few, the AI learns the wrong lessons. That's why people must check and test AI carefully."
+            }
+          ]
+        },
+        {
+          "id": "ai-quiz",
+          "title": "AI quiz",
+          "points": 5,
+          "blocks": [
+            {
+              "type": "quiz",
+              "id": "ai-quiz",
+              "passPercent": 70,
+              "questions": [
+                {
+                  "id": "ml",
+                  "type": "text",
+                  "prompt": "Learning rules from examples is called machine ____",
+                  "answers": [
+                    "learning"
+                  ]
+                },
+                {
+                  "id": "data",
+                  "type": "single_choice",
+                  "prompt": "What do we call the labelled examples a model learns from?",
+                  "options": [
+                    "Training data",
+                    "Hardware",
+                    "A password"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "wrong",
+                  "type": "true_false",
+                  "prompt": "AI is always right.",
+                  "answer": false,
+                  "explanation": "AI learns from data and can make mistakes, especially with poor or biased data."
+                },
+                {
+                  "id": "uses",
+                  "type": "multiple_choice",
+                  "prompt": "Which of these can AI do? (pick all)",
+                  "options": [
+                    "Recognise faces in photos",
+                    "Translate languages",
+                    "Make you taller"
+                  ],
+                  "answer": [
+                    0,
+                    1
+                  ],
+                  "points": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

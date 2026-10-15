@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "science-how-plants-grow",
+  "version": 1,
+  "title": "How Plants Grow",
+  "description": "From a tiny seed to a big flower: what plants need to live.",
+  "subject": {
+    "id": "science",
+    "name": "Science",
+    "color": "#43A047"
+  },
+  "ageRange": {
+    "min": 6,
+    "max": 10
+  },
+  "cover": "images/cover.webp",
+  "units": [
+    {
+      "id": "plants",
+      "title": "Plants",
+      "lessons": [
+        {
+          "id": "seed-to-flower",
+          "title": "From seed to flower",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "style": "heading",
+              "text": "A plant's life"
+            },
+            {
+              "type": "image",
+              "src": "images/stages.webp",
+              "caption": "Seed → sprout → plant → flower"
+            },
+            {
+              "type": "text",
+              "text": "A seed has a tiny baby plant inside. With water and warmth it sprouts: a root grows down and a shoot grows up towards the light."
+            },
+            {
+              "type": "audio",
+              "src": "audio/growing-song.m4a",
+              "title": "Growing song",
+              "transcript": "Seed in the soil, sleeping tight. Add some water, add some light. Up comes a sprout, green and small, soon it's a flower, standing tall!"
+            },
+            {
+              "type": "text",
+              "style": "fun_fact",
+              "text": "Some seeds can wait more than 1,000 years before they sprout!"
+            }
+          ]
+        },
+        {
+          "id": "plant-needs",
+          "title": "What plants need",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "image",
+              "src": "images/needs.webp",
+              "caption": "Sunlight, water, air and soil"
+            },
+            {
+              "type": "text",
+              "text": "Plants make their own food from sunlight, water and air. This is called photosynthesis. Their roots also take in minerals from the soil."
+            }
+          ]
+        },
+        {
+          "id": "plants-quiz",
+          "title": "Plant quiz",
+          "points": 5,
+          "blocks": [
+            {
+              "type": "quiz",
+              "id": "plants-quiz",
+              "questions": [
+                {
+                  "id": "first",
+                  "type": "single_choice",
+                  "prompt": "What does a plant start as?",
+                  "options": [
+                    "A flower",
+                    "A seed",
+                    "A leaf"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "needs",
+                  "type": "multiple_choice",
+                  "prompt": "What do plants need? (pick all)",
+                  "options": [
+                    "Sunlight",
+                    "Water",
+                    "Chocolate",
+                    "Air"
+                  ],
+                  "answer": [
+                    0,
+                    1,
+                    3
+                  ],
+                  "points": 2
+                },
+                {
+                  "id": "roots",
+                  "type": "true_false",
+                  "prompt": "Roots grow up towards the sky.",
+                  "answer": false,
+                  "explanation": "Roots grow down into the soil; shoots grow up."
+                },
+                {
+                  "id": "word",
+                  "type": "text",
+                  "prompt": "What is it called when plants make food from sunlight?",
+                  "answers": [
+                    "photosynthesis"
+                  ],
+                  "points": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

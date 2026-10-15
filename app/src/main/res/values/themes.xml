@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.KidLearn" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/primary</item>
+    </style>
+    <color name="background">#FFFFFBF5</color>
+    <color name="primary">#FF5B4CDB</color>
+    <color name="launcher_bg">#FF5B4CDB</color>
+</resources>

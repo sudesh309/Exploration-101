@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Back up learner profiles and marks; course media is re-importable and can be large. -->
+    <exclude domain="file" path="courses/" />
+</full-backup-content>

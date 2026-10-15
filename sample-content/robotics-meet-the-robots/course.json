@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "id": "robotics-meet-the-robots",
+  "version": 1,
+  "title": "Meet the Robots",
+  "description": "What makes a machine a robot? Sensors, a brain and motors!",
+  "subject": {
+    "id": "robotics",
+    "name": "Robotics",
+    "color": "#546E7A"
+  },
+  "ageRange": {
+    "min": 8,
+    "max": 12
+  },
+  "cover": "images/cover.webp",
+  "units": [
+    {
+      "id": "basics",
+      "title": "Robot basics",
+      "lessons": [
+        {
+          "id": "what-is-a-robot",
+          "title": "What is a robot?",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "style": "heading",
+              "text": "Robots sense, think and act"
+            },
+            {
+              "type": "image",
+              "src": "images/robot.webp",
+              "caption": "A robot has sensors, a controller and actuators"
+            },
+            {
+              "type": "text",
+              "text": "A robot is a machine that can SENSE the world around it, THINK about what to do, and ACT by moving or doing something."
+            },
+            {
+              "type": "image",
+              "src": "images/loop.webp",
+              "caption": "The sense → think → act loop repeats many times every second"
+            }
+          ]
+        },
+        {
+          "id": "robot-parts",
+          "title": "Robot parts",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Sensors are the robot's eyes and ears: cameras, distance sensors, touch switches and microphones."
+            },
+            {
+              "type": "text",
+              "text": "The controller is the robot's brain: a small computer running a program."
+            },
+            {
+              "type": "text",
+              "text": "Actuators are the robot's muscles: motors that turn wheels, move arms or open grippers."
+            },
+            {
+              "type": "text",
+              "style": "fun_fact",
+              "text": "The word 'robot' comes from the Czech word 'robota', meaning hard work. It was first used in a play in 1920."
+            }
+          ]
+        },
+        {
+          "id": "robot-quiz",
+          "title": "Robot quiz",
+          "points": 5,
+          "blocks": [
+            {
+              "type": "quiz",
+              "id": "robot-quiz",
+              "questions": [
+                {
+                  "id": "loop",
+                  "type": "single_choice",
+                  "prompt": "What is the robot loop?",
+                  "options": [
+                    "Sense → Think → Act",
+                    "Eat → Sleep → Play",
+                    "Act → Stop → Sense"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "sensors",
+                  "type": "multiple_choice",
+                  "prompt": "Which of these are sensors? (pick all)",
+                  "options": [
+                    "Camera",
+                    "Motor",
+                    "Touch switch",
+                    "Wheel"
+                  ],
+                  "answer": [
+                    0,
+                    2
+                  ],
+                  "points": 2
+                },
+                {
+                  "id": "brain",
+                  "type": "single_choice",
+                  "prompt": "Which part is the robot's brain?",
+                  "options": [
+                    "Actuator",
+                    "Controller",
+                    "Battery"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "year",
+                  "type": "number",
+                  "prompt": "In which year was the word 'robot' first used?",
+                  "answer": 1920
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

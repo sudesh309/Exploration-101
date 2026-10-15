@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "id": "maths-counting-fun",
+  "version": 1,
+  "title": "Counting Fun",
+  "description": "Count, listen and add with apples, stars and beeps.",
+  "subject": {
+    "id": "maths",
+    "name": "Maths",
+    "color": "#FF7043"
+  },
+  "ageRange": {
+    "min": 5,
+    "max": 8
+  },
+  "cover": "images/cover.webp",
+  "units": [
+    {
+      "id": "counting",
+      "title": "Counting",
+      "lessons": [
+        {
+          "id": "count-apples",
+          "title": "Count the apples",
+          "summary": "Look and count",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "style": "heading",
+              "text": "Let's count!"
+            },
+            {
+              "type": "text",
+              "text": "Point at each apple with your finger and say the numbers out loud: one, two, three..."
+            },
+            {
+              "type": "image",
+              "src": "images/five-apples.webp",
+              "caption": "How many apples?",
+              "alt": "Five red apples"
+            },
+            {
+              "type": "text",
+              "text": "There are 5 apples! When we count, the last number we say tells us how many there are."
+            },
+            {
+              "type": "text",
+              "style": "fun_fact",
+              "text": "People have been counting for over 40,000 years - long ago they used tally marks on bones!"
+            }
+          ]
+        },
+        {
+          "id": "listen-count",
+          "title": "Listen and count",
+          "summary": "Count with your ears",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Close your eyes and listen. Count every beep you hear."
+            },
+            {
+              "type": "audio",
+              "src": "audio/four-beeps.m4a",
+              "title": "Beep counting",
+              "transcript": "Beep, beep, beep, beep. That was 4 beeps!"
+            },
+            {
+              "type": "text",
+              "text": "Did you count 4 beeps? Great listening!"
+            }
+          ]
+        },
+        {
+          "id": "count-video",
+          "title": "Count-along video",
+          "summary": "Watch and count",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "video",
+              "src": "video/count-along.mp4",
+              "poster": "images/count-video-poster.webp",
+              "title": "Count to 5 with me"
+            },
+            {
+              "type": "text",
+              "text": "Can you count to 5 without the video? Try it now!"
+            }
+          ]
+        },
+        {
+          "id": "counting-quiz",
+          "title": "Counting quiz",
+          "summary": "Show what you know",
+          "points": 5,
+          "blocks": [
+            {
+              "type": "quiz",
+              "id": "counting-quiz",
+              "title": "Counting quiz",
+              "passPercent": 60,
+              "questions": [
+                {
+                  "id": "apples",
+                  "type": "single_choice",
+                  "prompt": "How many apples are there?",
+                  "image": "images/three-apples.webp",
+                  "options": [
+                    "2",
+                    "3",
+                    "4"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "after-four",
+                  "type": "single_choice",
+                  "prompt": "Which number comes after 4?",
+                  "options": [
+                    "3",
+                    "5",
+                    "6"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "beeps",
+                  "type": "number",
+                  "prompt": "How many beeps did you hear in the listening lesson?",
+                  "answer": 4
+                },
+                {
+                  "id": "ten-big",
+                  "type": "true_false",
+                  "prompt": "10 is bigger than 7.",
+                  "answer": true,
+                  "explanation": "When we count, 10 comes after 7, so it is bigger."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "adding",
+      "title": "Adding",
+      "lessons": [
+        {
+          "id": "putting-together",
+          "title": "Putting things together",
+          "points": 10,
+          "blocks": [
+            {
+              "type": "text",
+              "style": "heading",
+              "text": "Adding means putting together"
+            },
+            {
+              "type": "image",
+              "src": "images/two-plus-three.webp",
+              "caption": "2 stars and 3 stars make 5 stars"
+            },
+            {
+              "type": "text",
+              "text": "We write it like this: 2 + 3 = 5. The + sign means 'add' and = means 'is the same as'."
+            }
+          ]
+        },
+        {
+          "id": "adding-quiz",
+          "title": "Adding quiz",
+          "points": 5,
+          "blocks": [
+            {
+              "type": "quiz",
+              "id": "adding-quiz",
+              "questions": [
+                {
+                  "id": "q1",
+                  "type": "number",
+                  "prompt": "1 + 1 = ?",
+                  "answer": 2
+                },
+                {
+                  "id": "q2",
+                  "type": "number",
+                  "prompt": "2 + 3 = ?",
+                  "answer": 5
+                },
+                {
+                  "id": "q3",
+                  "type": "multiple_choice",
+                  "prompt": "Which ones make 4? (pick all)",
+                  "options": [
+                    "2 + 2",
+                    "3 + 1",
+                    "1 + 2"
+                  ],
+                  "answer": [
+                    0,
+                    1
+                  ],
+                  "points": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
