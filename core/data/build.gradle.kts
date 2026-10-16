@@ -11,6 +11,7 @@ android {
 dependencies {
     api(project(":core:domain"))
     implementation(project(":core:content"))
+    implementation(project(":core:sync"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.room.runtime)

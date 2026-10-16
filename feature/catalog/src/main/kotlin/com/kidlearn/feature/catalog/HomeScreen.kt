@@ -14,7 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,7 +46,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onOpenCourse: (courseId: String) -> Unit,
     onOpenResults: () -> Unit,
-    onOpenImport: () -> Unit,
+    onOpenQuestions: () -> Unit,
+    onOpenGrownUps: () -> Unit,
     onSwitchProfile: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -56,7 +57,8 @@ fun HomeScreen(
                 title = state.profile?.let { "Hi ${it.avatar} ${it.name}!" } ?: "KidLearn",
                 actions = {
                     IconButton(onClick = onOpenResults) { Icon(Icons.Filled.Star, contentDescription = "My results") }
-                    IconButton(onClick = onOpenImport) { Icon(Icons.Filled.Add, contentDescription = "Add courses") }
+                    IconButton(onClick = onOpenQuestions) { Text("🙋", style = MaterialTheme.typography.titleLarge) }
+                    IconButton(onClick = onOpenGrownUps) { Icon(Icons.Filled.Settings, contentDescription = "Grown-ups settings") }
                     TextButton(onClick = onSwitchProfile) { Text("Switch") }
                 },
             )
@@ -94,7 +96,7 @@ fun HomeScreen(
             if (state.courses.isEmpty()) {
                 item(key = "empty") {
                     Box(Modifier.fillMaxWidth().padding(top = 48.dp)) {
-                        EmptyState("📦", "No courses here yet. Tap + to add a course pack.")
+                        EmptyState("📦", "No courses here yet. Ask a grown-up to add some (⚙️ settings).")
                     }
                 }
             }

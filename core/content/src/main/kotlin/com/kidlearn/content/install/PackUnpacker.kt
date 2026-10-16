@@ -23,6 +23,12 @@ class PackUnpacker(
     private val maxEntries: Int = 10_000,
 ) {
     fun unpack(source: CoursePackSource, destination: File): File {
+        extract(source, destination)
+        return locateManifestRoot(destination)
+    }
+
+    /** Extracts the pack as-is, without looking for `course.json`. */
+    fun extract(source: CoursePackSource, destination: File) {
         destination.mkdirs()
         when (source.format) {
             CoursePackSource.Format.MANIFEST -> source.openStream().use { input ->
@@ -30,7 +36,6 @@ class PackUnpacker(
             }
             CoursePackSource.Format.ZIP -> unzip(source, destination)
         }
-        return locateManifestRoot(destination)
     }
 
     private fun unzip(source: CoursePackSource, destination: File) {

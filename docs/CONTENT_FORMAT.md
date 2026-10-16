@@ -5,7 +5,9 @@ A **course pack** is how content gets into KidLearn. A pack is either
 * a `.zip` containing `course.json` plus the media it references (pictures, audio, video), or
 * a bare `course.json` (for text/quiz-only courses, or media referenced by `https://` URL).
 
-`course.json` may sit at the root of the zip or inside a single top-level folder.
+`course.json` may sit at the root of the zip or inside a single top-level folder. A **bundle**
+zip (for example a whole GitHub repository) may hold many course folders and nested `.zip`
+packs; all of them are installed.
 
 Importing a pack **creates the course**. Importing a pack with the same `id` and a higher
 `version` **updates** it in place. Learner progress is kept because it is stored by
@@ -19,9 +21,10 @@ declaring `"subject": {"id": "music", ...}` adds a Music subject to the app.
 
 | From | How |
 | --- | --- |
-| Any file on the phone, SD card, USB-OTG drive, Google Drive, etc. | **+ → Choose a pack file** |
-| A web link | **+ → paste link → Download and add** (needs internet once; then works offline) |
-| A computer over USB | Copy packs into `Android/data/com.kidlearn.app/files/import/`, then **+ → Scan import folder** |
+| GitHub / Google Drive | **⚙️ → Download now** (see [SHARING_AND_SYNC.md](SHARING_AND_SYNC.md)) |
+| Any file on the phone, SD card, USB-OTG drive, Google Drive, etc. | **⚙️ → Add from file / link → Choose a pack file** |
+| A web link | **⚙️ → Add from file / link → paste link** (needs internet once; then works offline) |
+| A computer over USB | Copy packs into `Android/data/com.kidlearn.app/files/import/`, then **⚙️ → Add from file / link → Scan import folder** |
 | Chat / email / file manager | Open the `.zip` with **KidLearn** |
 | Bundled with the app | Put packs in `app/src/main/assets/bundled/` (installed or updated automatically when the app is installed or updated) |
 

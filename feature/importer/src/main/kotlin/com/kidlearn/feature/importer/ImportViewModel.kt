@@ -38,12 +38,13 @@ class ImportViewModel(
 
     val importFolderPath: String get() = sources.importFolderPath()
 
-    fun importFile(uri: Uri) = launchImport { listOf(courses.install(sources.fromUri(uri))) }
+    // Zips may hold one course or many (a whole repository / bundle).
+    fun importFile(uri: Uri) = launchImport { courses.installBundle(sources.fromUri(uri)) }
 
     fun importUrl(url: String) = launchImport {
         val trimmed = url.trim()
         require(trimmed.startsWith("https://") || trimmed.startsWith("http://")) { "Please enter a web link starting with https://" }
-        listOf(courses.install(sources.fromUrl(trimmed)))
+        courses.installBundle(sources.fromUrl(trimmed))
     }
 
     fun scanImportFolder() = launchImport {

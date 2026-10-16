@@ -8,11 +8,16 @@ import com.kidlearn.domain.model.QuestionResponse
 import com.kidlearn.domain.model.Quiz
 import com.kidlearn.domain.model.QuizResult
 import com.kidlearn.domain.repository.CourseRepository
+import com.kidlearn.domain.repository.ProfileRepository
 import com.kidlearn.domain.repository.ProgressRepository
+import com.kidlearn.domain.usecase.AskQuestion
 import com.kidlearn.domain.usecase.CompleteLesson
 import com.kidlearn.domain.usecase.SubmitQuiz
 import com.kidlearn.ui.blocks.LessonSession
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,6 +42,8 @@ class LessonViewModel(
     progress: ProgressRepository,
     private val completeLesson: CompleteLesson,
     private val submitQuizUseCase: SubmitQuiz,
+    private val profiles: ProfileRepository,
+    private val askQuestionUseCase: AskQuestion,
     override val profileId: Long,
     override val courseId: String,
     override val lessonId: String,
@@ -66,6 +73,20 @@ class LessonViewModel(
             val course = courses.getCourse(courseId)
             val lesson = course?.lesson(lessonId)
             if (course == null || lesson == null) missing.value = true else loaded.value = course to lesson
+        }
+    }
+
+    /** One-off messages for the screen, e.g. confirming a question was saved. */
+    private val _messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val messages: SharedFlow<String> = _messages.asSharedFlow()
+
+    /** Saves the learner's question about the element at [blockIndex] to the question log. */
+    fun askQuestion(blockIndex: Int, text: String) {
+        val (course, lesson) = loaded.value ?: return
+        viewModelScope.launch {
+            val profile = profiles.getProfile(profileId) ?: return@launch
+            val saved = askQuestionUseCase(profile, course, lesson, blockIndex, text)
+            if (saved != null) _messages.emit("Great question! 🌟 It's saved for a grown-up to answer.")
         }
     }
 

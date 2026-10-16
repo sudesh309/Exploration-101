@@ -44,45 +44,97 @@ class CourseStore(
     }
 
     fun install(source: CoursePackSource, allowSameVersion: Boolean = false): InstallOutcome {
-        val staging = File(root, "$TEMP_PREFIX${UUID.randomUUID()}")
+        val staging = newStagingDir()
         try {
             val packRoot = try {
                 unpacker.unpack(source, staging)
             } catch (e: IOException) {
                 return InstallOutcome.Rejected(listOf("Could not read '${source.displayName}': ${e.message}"))
             }
-
-            val missing = linkedSetOf<String>()
-            val result = parser.parse(File(packRoot, MANIFEST).readText(), checkingResolver(packRoot, missing))
-            val course = when (result) {
-                is ManifestResult.Failure -> return InstallOutcome.Rejected(result.errors)
-                is ManifestResult.Success -> result.course
-            }
-            if (missing.isNotEmpty()) {
-                return InstallOutcome.Rejected(missing.map { "Missing media file in pack: $it" })
-            }
-
-            val existing = load(course.id)
-            if (existing != null && existing.version > course.version) {
-                return InstallOutcome.Rejected(
-                    listOf("Installed '${course.title}' is version ${existing.version}; the pack is older (version ${course.version})."),
-                )
-            }
-            if (existing != null && existing.version == course.version && !allowSameVersion) {
-                return InstallOutcome.AlreadyUpToDate(existing.toSummary())
-            }
-
-            replaceDirectory(packRoot, File(root, course.id))
-            val installed = load(course.id) ?: return InstallOutcome.Rejected(listOf("Course could not be loaded after install"))
-            return if (existing == null) {
-                InstallOutcome.Installed(installed.toSummary())
-            } else {
-                InstallOutcome.Updated(installed.toSummary(), existing.version)
-            }
+            return installUnpacked(packRoot, allowSameVersion)
         } finally {
             staging.deleteRecursively()
         }
     }
+
+    /**
+     * Installs every course found in a bundle: a zip (for example a GitHub repository download)
+     * holding any number of course folders and/or nested `.zip` packs, at any depth.
+     * [subPath] limits the search to one folder of the bundle.
+     */
+    fun installBundle(source: CoursePackSource, subPath: String = "", allowSameVersion: Boolean = false): List<InstallOutcome> {
+        if (source.format == CoursePackSource.Format.MANIFEST) return listOf(install(source, allowSameVersion))
+        val staging = newStagingDir()
+        try {
+            try {
+                unpacker.extract(source, staging)
+            } catch (e: IOException) {
+                return listOf(InstallOutcome.Rejected(listOf("Could not read '${source.displayName}': ${e.message}")))
+            }
+            val searchRoot = searchRoot(staging, subPath)
+                ?: return listOf(InstallOutcome.Rejected(listOf("Folder '$subPath' not found in '${source.displayName}'")))
+            val courseDirs = searchRoot.walkTopDown().maxDepth(MAX_BUNDLE_DEPTH)
+                .filter { it.isDirectory && File(it, MANIFEST).isFile }
+                .toList()
+            // A course folder's own media never contains another course; skip nested matches.
+            val topLevelCourses = courseDirs.filter { dir -> courseDirs.none { other -> other != dir && dir.startsWith(other) } }
+            val nestedPacks = searchRoot.walkTopDown().maxDepth(MAX_BUNDLE_DEPTH)
+                .filter { it.isFile && it.extension.equals("zip", ignoreCase = true) }
+                .filter { zip -> topLevelCourses.none { zip.startsWith(it) } }
+                .sortedBy { it.path }
+                .toList()
+
+            val outcomes = topLevelCourses.sortedBy { it.path }.map { installUnpacked(it, allowSameVersion) } +
+                nestedPacks.map { zip ->
+                    install(CoursePackSource(zip.name, CoursePackSource.Format.ZIP) { zip.inputStream() }, allowSameVersion)
+                }
+            return outcomes.ifEmpty { listOf(InstallOutcome.Rejected(listOf("No courses found in '${source.displayName}'"))) }
+        } finally {
+            staging.deleteRecursively()
+        }
+    }
+
+    private fun searchRoot(extracted: File, subPath: String): File? {
+        val cleaned = subPath.trim().trim('/')
+        if (cleaned.isEmpty()) return extracted
+        val safe = PackPaths.normalize(cleaned) ?: return null
+        File(extracted, safe).takeIf { it.isDirectory }?.let { return it }
+        // GitHub archives wrap everything in a single "<repo>-<sha>/" folder.
+        val wrapper = extracted.listFiles { f -> f.isDirectory }?.singleOrNull() ?: return null
+        return File(wrapper, safe).takeIf { it.isDirectory }
+    }
+
+    private fun installUnpacked(packRoot: File, allowSameVersion: Boolean): InstallOutcome {
+        val missing = linkedSetOf<String>()
+        val result = parser.parse(File(packRoot, MANIFEST).readText(), checkingResolver(packRoot, missing))
+        val course = when (result) {
+            is ManifestResult.Failure -> return InstallOutcome.Rejected(result.errors)
+            is ManifestResult.Success -> result.course
+        }
+        if (missing.isNotEmpty()) {
+            return InstallOutcome.Rejected(missing.map { "'${course.title}': missing media file $it" })
+        }
+
+        val existing = load(course.id)
+        if (existing != null && existing.version > course.version) {
+            return InstallOutcome.Rejected(
+                listOf("Installed '${course.title}' is version ${existing.version}; the pack is older (version ${course.version})."),
+            )
+        }
+        if (existing != null && existing.version == course.version && !allowSameVersion) {
+            return InstallOutcome.AlreadyUpToDate(existing.toSummary())
+        }
+
+        replaceDirectory(packRoot, File(root, course.id))
+        val installed = load(course.id) ?: return InstallOutcome.Rejected(listOf("Course could not be loaded after install"))
+        return if (existing == null) {
+            InstallOutcome.Installed(installed.toSummary())
+        } else {
+            InstallOutcome.Updated(installed.toSummary(), existing.version)
+        }
+    }
+
+    private fun newStagingDir() = File(root, "$TEMP_PREFIX${UUID.randomUUID()}")
 
     /** Swaps in the new content with renames so a crash never leaves a half-written course. */
     private fun replaceDirectory(newContent: File, target: File) {
@@ -112,5 +164,6 @@ class CourseStore(
     companion object {
         const val MANIFEST = "course.json"
         private const val TEMP_PREFIX = ".tmp-"
+        private const val MAX_BUNDLE_DEPTH = 8
     }
 }

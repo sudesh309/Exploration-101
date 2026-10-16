@@ -50,6 +50,8 @@ dependencies {
     implementation(project(":feature:quiz"))
     implementation(project(":feature:results"))
     implementation(project(":feature:importer"))
+    implementation(project(":feature:questions"))
+    implementation(project(":feature:sync"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

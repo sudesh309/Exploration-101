@@ -1,5 +1,7 @@
 package com.kidlearn.app
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -7,6 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,8 +30,14 @@ import com.kidlearn.feature.profiles.EditProfileScreen
 import com.kidlearn.feature.profiles.EditProfileViewModel
 import com.kidlearn.feature.profiles.ProfilesScreen
 import com.kidlearn.feature.profiles.ProfilesViewModel
+import com.kidlearn.feature.questions.QuestionsScreen
+import com.kidlearn.feature.questions.QuestionsViewModel
 import com.kidlearn.feature.results.ResultsScreen
 import com.kidlearn.feature.results.ResultsViewModel
+import com.kidlearn.feature.sync.SyncScreen
+import com.kidlearn.feature.sync.SyncViewModel
+import com.kidlearn.ui.components.GrownUpGate
+import java.io.File
 
 private object Routes {
     const val PROFILES = "profiles"
@@ -37,6 +47,8 @@ private object Routes {
     const val LESSON = "lesson/{courseId}/{lessonId}"
     const val RESULTS = "results"
     const val IMPORT = "import"
+    const val QUESTIONS = "questions"
+    const val GROWN_UPS = "grown-ups"
 
     fun editProfile(id: Long?) = "profile/edit" + (id?.let { "?id=$it" } ?: "")
     fun course(courseId: String) = "course/$courseId"
@@ -82,7 +94,8 @@ fun KidLearnNavHost(container: AppContainer, sharedPack: Uri?) {
                 viewModel = viewModel { HomeViewModel(container.courses, container.profiles, profileId()) },
                 onOpenCourse = { nav.navigate(Routes.course(it)) },
                 onOpenResults = { nav.navigate(Routes.RESULTS) },
-                onOpenImport = { nav.navigate(Routes.IMPORT) },
+                onOpenQuestions = { nav.navigate(Routes.QUESTIONS) },
+                onOpenGrownUps = { nav.navigate(Routes.GROWN_UPS) },
                 onSwitchProfile = { nav.switchProfile(container) },
             )
         }
@@ -104,6 +117,8 @@ fun KidLearnNavHost(container: AppContainer, sharedPack: Uri?) {
                         progress = container.progress,
                         completeLesson = container.completeLesson,
                         submitQuizUseCase = container.submitQuiz,
+                        profiles = container.profiles,
+                        askQuestionUseCase = container.askQuestion,
                         profileId = profileId(),
                         courseId = courseId,
                         lessonId = lessonId,
@@ -120,6 +135,30 @@ fun KidLearnNavHost(container: AppContainer, sharedPack: Uri?) {
                 onBack = { nav.popBackStack() },
             )
         }
+        composable(Routes.QUESTIONS) {
+            val context = LocalContext.current
+            QuestionsScreen(
+                viewModel = viewModel {
+                    QuestionsViewModel(container.questions, container.syncSettings, container.uploadQuestions, profileId())
+                },
+                onBack = { nav.popBackStack() },
+                onShareFile = { file -> shareJsonFile(context, file) },
+            )
+        }
+        composable(Routes.GROWN_UPS) {
+            // Kids can't wander into settings: a quick grown-up check first (kept across rotation).
+            var unlocked by rememberSaveable { mutableStateOf(false) }
+            if (!unlocked) {
+                GrownUpGate(onPassed = { unlocked = true }, onCancel = { nav.popBackStack() })
+            } else {
+                SyncScreen(
+                    viewModel = viewModel { SyncViewModel(container.syncSettings, container.contentSync, container::isOnline) },
+                    onBack = { nav.popBackStack() },
+                    onManageCourses = { nav.navigate(Routes.IMPORT) },
+                    onOpenQuestions = { nav.navigate(Routes.QUESTIONS) },
+                )
+            }
+        }
         composable(Routes.IMPORT) {
             val vm = viewModel { ImportViewModel(container.courses, container.packSourceProvider) }
             pendingPack?.let { pack ->
@@ -135,6 +174,17 @@ fun KidLearnNavHost(container: AppContainer, sharedPack: Uri?) {
     if (sharedPack != null) {
         LaunchedEffect(sharedPack) { nav.navigate(Routes.IMPORT) }
     }
+}
+
+/** Opens the system share sheet (email, chat apps, Google Drive, Files...) for a JSON file. */
+private fun shareJsonFile(context: Context, file: File) {
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+    val send = Intent(Intent.ACTION_SEND)
+        .setType("application/json")
+        .putExtra(Intent.EXTRA_STREAM, uri)
+        .putExtra(Intent.EXTRA_SUBJECT, "KidLearn questions")
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    context.startActivity(Intent.createChooser(send, "Share questions").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
 private fun NavHostController.switchProfile(container: AppContainer) {

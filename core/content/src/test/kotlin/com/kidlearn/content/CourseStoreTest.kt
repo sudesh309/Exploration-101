@@ -135,3 +135,48 @@ class CourseStoreTest {
         assertTrue(result is ManifestResult.Failure)
     }
 }
+
+class CourseBundleTest {
+    @get:Rule
+    val tmp = TemporaryFolder()
+
+    private fun course(id: String, version: Int = 1) = """
+        {"id": "$id", "version": $version, "title": "$id", "subject": {"id": "s", "name": "S"},
+         "units": [{"title": "U", "lessons": [{"id": "l", "title": "L", "blocks": [{"type": "text", "text": "hi"}]}]}]}
+    """.trimIndent().toByteArray()
+
+    private fun zip(files: Map<String, ByteArray>): ByteArray = ByteArrayOutputStream().also { out ->
+        ZipOutputStream(out).use { z -> files.forEach { (n, d) -> z.putNextEntry(ZipEntry(n)); z.write(d); z.closeEntry() } }
+    }.toByteArray()
+
+    @Test
+    fun `installs every course folder and nested pack in a repository archive`() {
+        val store = CourseStore(tmp.newFolder("courses"))
+        val nested = zip(mapOf("course.json" to course("robots")))
+        val repo = zip(
+            mapOf(
+                "repo-sha/README.md" to "hi".toByteArray(),
+                "repo-sha/packs/maths/course.json" to course("maths"),
+                "repo-sha/packs/science/course.json" to course("science"),
+                "repo-sha/packs/zips/robots.zip" to nested,
+                "repo-sha/other/ignored/course.json" to course("ignored"),
+            ),
+        )
+        val outcomes = store.installBundle(CoursePackSource("repo.zip", CoursePackSource.Format.ZIP) { repo.inputStream() }, subPath = "packs")
+        assertEquals(3, outcomes.count { it is InstallOutcome.Installed })
+        assertEquals(listOf("maths", "robots", "science"), store.installedCourseIds())
+
+        val all = store.installBundle(CoursePackSource("repo.zip", CoursePackSource.Format.ZIP) { repo.inputStream() })
+        assertEquals(1, all.count { it is InstallOutcome.Installed }) // only "ignored" is new
+        assertEquals(3, all.count { it is InstallOutcome.AlreadyUpToDate })
+    }
+
+    @Test
+    fun `missing sub folder and empty bundle are rejected`() {
+        val store = CourseStore(tmp.newFolder("courses"))
+        val empty = zip(mapOf("readme.txt" to byteArrayOf(1)))
+        val src = CoursePackSource("e.zip", CoursePackSource.Format.ZIP) { empty.inputStream() }
+        assertTrue(store.installBundle(src).single() is InstallOutcome.Rejected)
+        assertTrue(store.installBundle(src, "nope").single() is InstallOutcome.Rejected)
+    }
+}

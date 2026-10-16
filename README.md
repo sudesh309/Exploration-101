@@ -9,10 +9,15 @@ pack, with no code changes.
 * **Content as data:** a course is a folder with a `course.json` and its media files, zipped
   into a pack. Import a pack to create a course; import a newer version to update it. See
   [docs/CONTENT_FORMAT.md](docs/CONTENT_FORMAT.md).
-* **Import from anywhere:** a file picker (storage, SD card, USB drive, cloud drives), a web
+* **Import from anywhere:** GitHub or Google Drive downloads, a file picker (storage, SD card, USB drive, cloud drives), a web
   link, a USB import folder, "Open with" from other apps, or packs bundled in the APK.
 * **Fully offline:** courses are stored on the phone. The internet is only needed when a parent
   or teacher downloads a pack from a link.
+* **Kids ask questions:** a **🙋 Ask a question** button under every lesson element saves the
+  question to a JSON log. The log can be shared through any app or uploaded to GitHub. See
+  [docs/SHARING_AND_SYNC.md](docs/SHARING_AND_SYNC.md).
+* **Online course sources:** grown-ups set up a GitHub repository and/or Google Drive in the app.
+  **Download now** fetches from both and installs new or updated courses.
 * **Learner profiles:** each child has their own profile with progress tracking, marks,
   grades and stars, broken down by subject, course and quiz.
 * **Built for 3 GB phones:** see [Performance](#performance-on-low-end-phones).
@@ -23,6 +28,7 @@ pack, with no code changes.
 app/                 Navigation, dependency wiring, Application (Coil tuning, bundled-pack sync)
 core/domain          Pure Kotlin: models, repository interfaces, use cases (grading, marks)
 core/content         Pure Kotlin: course-pack parser, validator, safe installer/updater
+core/sync            Pure Kotlin: GitHub & Google Drive clients, download orchestration, question-log format
 core/data            Android: Room database (profiles, progress), file-based course repository
 core/ui              Android: theme, shared components, the BlockRenderer plug-in API
 feature/profiles     Learner profiles (pick / create / edit / delete)
@@ -32,14 +38,16 @@ feature/media        Audio & video renderers (Media3 ExoPlayer)
 feature/quiz         Quiz renderer (all question types)
 feature/results      Marks and grades report
 feature/importer     Import/update/remove course packs
+feature/questions    The kids' questions log: list, share, upload
+feature/sync         Grown-ups settings: GitHub / Google Drive sources and "Download now"
 tools/packer         Command-line tool for content authors: validate and zip a course folder
 sample-content/      Source folders of the bundled sample courses
 ```
 
 Dependencies point inwards only: `feature → core:ui → core:domain`, and
-`core:data → core:content → core:domain`. Feature modules never depend on each other or on
-`core:data`; the `app` module is the only place that wires everything together. The domain and
-content modules are plain Kotlin, so they build and test on any JVM.
+`core:data → core:content / core:sync → core:domain`. Feature modules never depend on each other or on
+`core:data`; the `app` module is the only place that wires everything together. The domain, content
+and sync modules are plain Kotlin, so they build and test on any JVM.
 
 ### Extending the app
 
@@ -71,7 +79,7 @@ Requirements: JDK 17+ and the Android SDK (API 35).
 
 ```bash
 ./gradlew assembleDebug                         # app/build/outputs/apk/debug/app-debug.apk
-./gradlew :core:domain:test :core:content:test  # pure-Kotlin unit tests
+./gradlew :core:domain:test :core:content:test :core:sync:test  # pure-Kotlin unit tests
 ```
 
 CI (`.github/workflows/android.yml`) runs the unit tests, validates every sample pack and

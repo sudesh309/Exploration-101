@@ -5,8 +5,10 @@ import android.net.Uri
 import com.kidlearn.data.DataModule
 import com.kidlearn.domain.model.CoursePackSource
 import com.kidlearn.domain.model.InstallOutcome
+import com.kidlearn.domain.usecase.AskQuestion
 import com.kidlearn.domain.usecase.CompleteLesson
 import com.kidlearn.domain.usecase.SubmitQuiz
+import com.kidlearn.domain.usecase.UploadQuestions
 import com.kidlearn.feature.importer.PackSourceProvider
 import com.kidlearn.feature.lesson.visualBlockRenderers
 import com.kidlearn.feature.media.mediaBlockRenderers
@@ -26,10 +28,16 @@ class AppContainer(context: Context) {
     val courses get() = data.courses
     val profiles get() = data.profiles
     val progress get() = data.progress
+    val questions get() = data.questions
+    val syncSettings get() = data.syncSettings
+    val contentSync get() = data.contentSync
     val session = SessionStore(context)
 
     val completeLesson by lazy { CompleteLesson(data.progress) }
     val submitQuiz by lazy { SubmitQuiz(data.progress) }
+    val askQuestion by lazy { AskQuestion(data.questions) }
+    val uploadQuestions by lazy { UploadQuestions(data.questions, data.syncSettings, data.questionUploader) }
+    fun isOnline(): Boolean = data.network.isOnline()
 
     val blockRenderers by lazy {
         BlockRendererRegistry(visualBlockRenderers() + mediaBlockRenderers() + quizBlockRenderers())

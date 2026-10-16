@@ -47,6 +47,19 @@ internal class FileCourseRepository(
         outcome
     }
 
+    override suspend fun installBundle(source: CoursePackSource, subPath: String): List<InstallOutcome> = mutex.withLock {
+        val outcomes = withContext(io) { store.installBundle(source, subPath) }
+        outcomes.forEach { outcome ->
+            when (outcome) {
+                is InstallOutcome.Installed -> cache.remove(outcome.course.id)
+                is InstallOutcome.Updated -> cache.remove(outcome.course.id)
+                else -> Unit
+            }
+        }
+        if (outcomes.any { it is InstallOutcome.Installed || it is InstallOutcome.Updated }) refresh()
+        outcomes
+    }
+
     override suspend fun remove(courseId: String) = mutex.withLock {
         withContext(io) { store.remove(courseId) }
         invalidate(courseId)
